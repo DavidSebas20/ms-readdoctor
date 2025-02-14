@@ -8,26 +8,29 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/doctors")
+@RequestMapping("/read-doctor/doctors")
 public class DoctorController {
-
     private final DoctorService doctorService;
 
     public DoctorController(DoctorService doctorService) {
         this.doctorService = doctorService;
     }
 
-    // Obtener todos los doctores
+    @GetMapping("/{id}")
+    public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
+        return doctorService.getDoctorById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     @GetMapping
     public ResponseEntity<List<Doctor>> getAllDoctors() {
         List<Doctor> doctors = doctorService.getAllDoctors();
         return ResponseEntity.ok(doctors);
     }
 
-    // Obtener un doctor por su ID
-    @GetMapping("/{id}")
-    public ResponseEntity<Doctor> getDoctorById(@PathVariable Long id) {
-        Doctor doctor = doctorService.getDoctorById(id);
-        return ResponseEntity.ok(doctor);
+    @GetMapping("/health")
+    public ResponseEntity<String> healthCheck() {
+        return ResponseEntity.ok("Healthy");
     }
 }
